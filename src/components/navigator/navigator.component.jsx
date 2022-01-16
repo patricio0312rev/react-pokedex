@@ -29,6 +29,9 @@ const Navigator = () => {
                 <Link to="/" className={classes.Link}>
                     <Typography className={classes.title} variant="h6">Pokedex</Typography>
                 </Link>
+                <Link to="/pokemon/favourites" className={classes.Link} style={{ marginLeft: 10 }}>
+                    <Typography className={classes.title} variant="h6">Favourites</Typography>
+                </Link>
             </Toolbar>
         </AppBar>
     );

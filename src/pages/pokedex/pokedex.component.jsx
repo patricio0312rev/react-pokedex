@@ -37,7 +37,7 @@ const PokedexPage = () => {
 
     const axiosPokemonData = () => {
         // Usando Axios
-        axios.get(`${baseUri}?limit=50`).then((response) => {
+        axios.get(`${baseUri}?limit=900`).then((response) => {
             if(response.status >= 200 && response.status < 300) {
                 const { results } = response.data;
                 let newPokemonData = [];
