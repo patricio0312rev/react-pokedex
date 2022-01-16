@@ -1,10 +1,22 @@
-import { Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress, Grid } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import PokemonCard from "../../components/pokemon-card/pokemon-card.component";
 
 import './pokedex.styles.css';
 
+const useStyles = makeStyles((theme) => ({
+    pokedexContainer: {
+        textAlign: 'center',
+        padding: '80px 10px 0px 10px',
+        backgroundColor: 'rgb(68,68,68)',
+    }
+}));
+
 const PokedexPage = () => {
+    const classes = useStyles();
+
     const baseUri = process.env.REACT_APP_BASE_API_URL;
     const imageUri = process.env.REACT_APP_IMAGE_API_URL;
 
@@ -25,7 +37,7 @@ const PokedexPage = () => {
 
     const axiosPokemonData = () => {
         // Usando Axios
-        axios.get(`${baseUri}?limit=900`).then((response) => {
+        axios.get(`${baseUri}?limit=50`).then((response) => {
             if(response.status >= 200 && response.status < 300) {
                 const { results } = response.data;
                 let newPokemonData = [];
@@ -40,7 +52,7 @@ const PokedexPage = () => {
 
                     newPokemonData.push(pokemonObject);
                 });
-                
+
                 setPokemonData(newPokemonData);
             }
         });
@@ -54,9 +66,12 @@ const PokedexPage = () => {
     return(
         <Box>
             {
-                pokemonData ? pokemonData.map((pokemon) => {
-                    return <h1>{pokemon.name}</h1>
-                }) 
+                pokemonData ? 
+                <Grid container spacing={2} className={classes.pokedexContainer}>
+                    { pokemonData.map((pokemon) => {
+                        return <PokemonCard style={{ marginLeft: 10 }} pokemon={pokemon} image={pokemon.url} key={pokemon.id}/>
+                    })}
+                </Grid> 
                 :
                 <CircularProgress style={{ marginTop: 100 }} />
             }
