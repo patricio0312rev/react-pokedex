@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { connect } from 'react-redux'
 
 import './pokemon-detail.styles.css';
 import axios from 'axios';
@@ -6,6 +7,9 @@ import { useParams } from 'react-router-dom';
 import { Box, Button, Grid, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { Favorite } from "@mui/icons-material";
+import { toggleFavourite } from "../../redux/actions";
+
+
 
 const useStyles = makeStyles((theme) => ({
     pokedexContainer: {
@@ -44,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }))
 
-const PokemonDetailPage = () => {
+export const PokemonDetailPage = (props) => {
     const [pokemon, setPokemonData] = useState({});
 
     const classes = useStyles();
@@ -57,9 +61,20 @@ const PokemonDetailPage = () => {
             if(response.status >= 200 && response.status < 300) {
                 const { data } = response;
                 setPokemonData(data);
-                console.log(pokemon);
             }
         });
+    }
+
+    const favouriteChecker = (pokemon) => {
+        let found = false;
+
+        props.favourites?.map((p) => {
+            if(p.id === pokemon.id) {
+                found = true;
+            }
+        });
+
+        return found;
     }
 
     useEffect(() => {
@@ -80,8 +95,8 @@ const PokemonDetailPage = () => {
                         <hr className={ classes.separator }></hr>
                         <Grid container>
                             <Grid item md={1}>
-                                <Button className={ classes.favourite }>
-                                    <Favorite style={{ color: "white", fontSize: 50 }} />
+                                <Button className={ classes.favourite } onClick={() => props.toggleFavourite(pokemon)}>
+                                    <Favorite style={{ fontSize: 50, color: favouriteChecker(pokemon) ? "red" : "white" }} />
                                 </Button>
                             </Grid>
 
@@ -112,18 +127,23 @@ const PokemonDetailPage = () => {
                             <Grid item md={2}>
                                 <Typography className={ classes.text }>
                                     Type(s)
-                                    <br></br>
+                                    <br />
 
-                                    {pokemon.types.map((pokemonTypes) => {
-                                        const { name } = pokemonTypes.type;
-                                        
-                                        return (
-                                            <Typography>
-                                                { name }
-                                                <br></br>
-                                            </Typography>
-                                        )
-                                    })}
+                                    {
+                                        pokemon.types ? 
+                                        pokemon.types.map((pokemonTypes, key) => {
+                                            const { name } = pokemonTypes.type;
+                                            
+                                            return (
+                                                <span key={key} >
+                                                    { name }
+                                                    <br />
+                                                </span>
+                                            )
+                                        })
+                                        : 
+                                        <Typography>No hay resultados</Typography>
+                                    }
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -133,7 +153,15 @@ const PokemonDetailPage = () => {
                 <Box>No</Box>
             }
         </Box>
-    );
+    )
 }
 
-export default PokemonDetailPage;
+const mapStateToProps = (state) => ({
+    favourites: state.favourites,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    toggleFavourite: (pokemon) => dispatch(toggleFavourite(pokemon))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(PokemonDetailPage)
