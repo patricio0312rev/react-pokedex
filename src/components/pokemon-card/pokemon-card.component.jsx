@@ -3,6 +3,7 @@ import React from "react";
 import './pokemon-card.styles.css';
 import { Card, CardContent, CardMedia, Grid, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     card: {
@@ -21,6 +22,9 @@ const useStyles = makeStyles((theme) => ({
     },
     cardContent: {
         textAlign: 'center',
+    },
+    link: {
+        textDecoration: 'none',
     }
 }));
 
@@ -31,13 +35,15 @@ const PokemonCard = (props) => {
 
     return(
         <Grid item xs={12} sm={2} key={id}>
-            <Card className={classes.card}>
-                <CardMedia image={image} className={classes.cardMedia}></CardMedia>
+            <Link to={"/pokemon/" + id} className={classes.link}>
+                <Card className={classes.card}>
+                    <CardMedia image={image} className={classes.cardMedia}></CardMedia>
 
-                <CardContent className={classes.cardContent}>
-                    <Typography>{name}</Typography>
-                </CardContent>
-            </Card>
+                    <CardContent className={classes.cardContent}>
+                        <Typography>{name}</Typography>
+                    </CardContent>
+                </Card>
+            </Link>
         </Grid>
     );
 }
